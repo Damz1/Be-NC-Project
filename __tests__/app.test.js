@@ -13,14 +13,6 @@ beforeEach(() => {
 });
 
 describe("Get 200: /api/categories", () => {
-  test("GET 200: response with a message up and running", () => {
-    return request(app)
-      .get("/api/categories")
-      .expect(200)
-      .then((response) => {
-        expect(response.body.msg).toBe("server is up and running");
-      });
-  });
   test("should response with an array of category objects, with propertie: slug, description", () => {
     return request(app)
       .get("/api/categories")
@@ -35,7 +27,10 @@ describe("Get 200: /api/categories", () => {
         });
       });
   });
-  test("GET 404: response with a message not found for a typo", () => {
+});
+
+describe("404: response with a message not found url", () => {
+  test("404: response with a message not found for a typo", () => {
     return request(app)
       .get("/api/categores")
       .expect(404)
@@ -44,3 +39,22 @@ describe("Get 200: /api/categories", () => {
       });
   });
 });
+
+// describe('Get 200: /api/reviews/:review_id', () => {
+
+// });
+/*
+Responds with:
+
+a review object, which should have the following properties:
+
+review_id
+title
+review_body
+designer
+review_img_url
+votes
+category
+owner
+created_at
+*/

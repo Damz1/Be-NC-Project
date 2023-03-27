@@ -7,14 +7,12 @@ app.use(express.json());
 
 app.get("/api/categories", getCategories);
 
+app.all("*", (req, res) => {
+  res.status(404).send({ msg: "404: Not Found" });
+});
+
 // ----Error Handling---//
 app.use(handle400Errors);
 app.use(handleOtherErrors);
-
-app.all("*", (req, res) => {
-  if (req.method === "GET") {
-    res.status(404).send({ msg: "404: Not Found" });
-  }
-});
 
 module.exports = app;
