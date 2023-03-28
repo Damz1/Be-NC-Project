@@ -12,7 +12,7 @@ const fetchReviewById = (id) => {
     .query(`SELECT * FROM reviews WHERE review_id = $1;`, [id])
     .then((review) => {
       if (!review.rows.length) {
-        return Promise.reject({ msg: "not found" });
+        return Promise.reject({ status: 404, msg: "not found" });
       }
       return review.rows;
     });

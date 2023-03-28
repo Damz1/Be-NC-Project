@@ -30,18 +30,18 @@ describe("Get 200: /api/categories", () => {
 });
 
 describe("404: response with a message not found url", () => {
-  test("404: response with a message 'not found' for a typo", () => {
+  test("404: response with a message 'not found' for a non-existen url", () => {
     return request(app)
       .get("/api/categores")
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("404: Url Not Found");
+        expect(response.body.msg).toBe("404: url not found");
       });
   });
 });
 
 describe("Get 200: /api/reviews/:review_id", () => {
-  test("should responde with an object with all properties", () => {
+  test("should respond with an object with all properties", () => {
     return request(app)
       .get("/api/reviews/1")
       .expect(200)
@@ -59,7 +59,7 @@ describe("Get 200: /api/reviews/:review_id", () => {
         expect(review).toHaveProperty("created_at");
       });
   });
-  test("should responde with the reivew that match the id", () => {
+  test("should respond with the reivew that match the id", () => {
     return request(app)
       .get("/api/reviews/1")
       .expect(200)
@@ -92,7 +92,7 @@ describe("Get 200: /api/reviews/:review_id", () => {
       .get("/api/reviews/string")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("400: BAD REQUEST");
+        expect(body.msg).toBe("400: bad request");
       });
   });
 });
