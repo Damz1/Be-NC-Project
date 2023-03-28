@@ -3,7 +3,6 @@ const request = require("supertest");
 const db = require("../db/connection");
 const testData = require("../db/data/test-data");
 const seed = require("../db/seeds/seed");
-const { toBeSortedBy } = require("jest-sorted");
 
 afterAll(() => {
   return db.end();
@@ -105,17 +104,20 @@ describe("Get 200: /api/reviews", () => {
       .expect(200)
       .then(({ body }) => {
         const reviews = body.reviews;
+        expect(reviews).toHaveLength(13);
         expect(reviews).toBeInstanceOf(Array);
         reviews.forEach((review) => {
-          expect(review).toHaveProperty("owner");
-          expect(review).toHaveProperty("title");
-          expect(review).toHaveProperty("review_id");
-          expect(review).toHaveProperty("category");
-          expect(review).toHaveProperty("review_img_url");
-          expect(review).toHaveProperty("created_at");
-          expect(review).toHaveProperty("votes");
-          expect(review).toHaveProperty("designer");
-          expect(review).toHaveProperty("comment_count");
+          expect(review).toMatchObject({
+            owner: expect.any(String),
+            title: expect.any(String),
+            review_id: expect.any(Number),
+            category: expect.any(String),
+            review_img_url: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            designer: expect.any(String),
+            comment_count: expect.any(String),
+          });
         });
       });
   });
