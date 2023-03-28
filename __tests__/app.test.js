@@ -30,31 +30,69 @@ describe("Get 200: /api/categories", () => {
 });
 
 describe("404: response with a message not found url", () => {
-  test("404: response with a message not found for a typo", () => {
+  test("404: response with a message 'not found' for a typo", () => {
     return request(app)
       .get("/api/categores")
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("404: Not Found");
+        expect(response.body.msg).toBe("404: Url Not Found");
       });
   });
 });
 
-// describe('Get 200: /api/reviews/:review_id', () => {
-
-// });
-/*
-Responds with:
-
-a review object, which should have the following properties:
-
-review_id
-title
-review_body
-designer
-review_img_url
-votes
-category
-owner
-created_at
-*/
+describe("Get 200: /api/reviews/:review_id", () => {
+  test("should responde with an object with all properties", () => {
+    return request(app)
+      .get("/api/reviews/1")
+      .expect(200)
+      .then(({ body }) => {
+        const review = body.review[0];
+        expect(review).toBeInstanceOf(Object);
+        expect(review).toHaveProperty("review_id");
+        expect(review).toHaveProperty("title");
+        expect(review).toHaveProperty("review_body");
+        expect(review).toHaveProperty("designer");
+        expect(review).toHaveProperty("review_img_url");
+        expect(review).toHaveProperty("votes");
+        expect(review).toHaveProperty("category");
+        expect(review).toHaveProperty("owner");
+        expect(review).toHaveProperty("created_at");
+      });
+  });
+  test("should responde with the reivew that match the id", () => {
+    return request(app)
+      .get("/api/reviews/1")
+      .expect(200)
+      .then(({ body }) => {
+        const review = body.review;
+        expect(review[0]).toMatchObject({
+          review_id: 1,
+          title: "Agricola",
+          category: "euro game",
+          designer: "Uwe Rosenberg",
+          owner: "mallionaire",
+          review_body: "Farmyard fun!",
+          review_img_url:
+            "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+          created_at: "2021-01-18T10:00:20.514Z",
+          votes: 1,
+        });
+      });
+  });
+  test("404: should return not found when inserting a non existing id", () => {
+    return request(app)
+      .get("/api/reviews/9999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found");
+      });
+  });
+  test('400: should return "Bad request" when inserted an id that is not a number ', () => {
+    return request(app)
+      .get("/api/reviews/string")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400: BAD REQUEST");
+      });
+  });
+});
