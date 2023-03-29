@@ -7,5 +7,7 @@ exports.handle400Errors = (err, req, res, next) => {
 };
 
 exports.handleOtherErrors = (err, req, res, next) => {
-  res.status(404).send({ msg: "not found" });
+  if (err.status && err.msg) {
+    res.status(err.status).send({ msg: "not found" });
+  }
 };

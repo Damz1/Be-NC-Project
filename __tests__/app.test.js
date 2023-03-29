@@ -12,8 +12,8 @@ beforeEach(() => {
   return seed(testData);
 });
 
-describe("Get 200: /api/categories", () => {
-  test("should response with an array of category objects, with propertie: slug, description", () => {
+describe("/api/categories", () => {
+  test("Get 200: should response with an array of category objects, with propertie: slug, description", () => {
     return request(app)
       .get("/api/categories")
       .expect(200)
@@ -40,8 +40,8 @@ describe("404: response with a message not found url", () => {
   });
 });
 
-describe("Get 200: /api/reviews/:review_id", () => {
-  test("should respond with an object with all properties", () => {
+describe("/api/reviews/:review_id", () => {
+  test("Get 200: should respond with an object with all properties", () => {
     return request(app)
       .get("/api/reviews/1")
       .expect(200)
@@ -59,7 +59,7 @@ describe("Get 200: /api/reviews/:review_id", () => {
         expect(review).toHaveProperty("created_at");
       });
   });
-  test("should respond with the reivew that match the id", () => {
+  test("Get 200: should respond with the reivew that match the id", () => {
     return request(app)
       .get("/api/reviews/1")
       .expect(200)
@@ -79,7 +79,7 @@ describe("Get 200: /api/reviews/:review_id", () => {
         });
       });
   });
-  test("404: should return not found when inserting a non existing id", () => {
+  test("Get 404: should return not found when inserting a non existing id", () => {
     return request(app)
       .get("/api/reviews/9999")
       .expect(404)
@@ -87,7 +87,7 @@ describe("Get 200: /api/reviews/:review_id", () => {
         expect(body.msg).toBe("not found");
       });
   });
-  test('400: should return "Bad request" when inserted an id that is not a number ', () => {
+  test('Get 400: should return "Bad request" when inserted an id that is not a number ', () => {
     return request(app)
       .get("/api/reviews/string")
       .expect(400)
@@ -97,8 +97,8 @@ describe("Get 200: /api/reviews/:review_id", () => {
   });
 });
 
-describe("Get 200: /api/reviews", () => {
-  test("should respond with an array of objects reviews with all properties", () => {
+describe("/api/reviews", () => {
+  test("Get 200: should respond with an array of objects reviews with all properties", () => {
     return request(app)
       .get("/api/reviews")
       .expect(200)
@@ -121,13 +121,73 @@ describe("Get 200: /api/reviews", () => {
         });
       });
   });
-  test("should respond with an array of objects sorted by date in descending order", () => {
+  test("Get 200: should respond with an array of objects sorted by date in descending order", () => {
     return request(app)
       .get("/api/reviews")
       .expect(200)
       .then(({ body }) => {
         const reviews = body.reviews;
         expect(reviews).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+});
+
+describe("/api/reviews/:review_id/comments", () => {
+  test("Get 200: comments should be served with the most recent comments first", () => {
+    return request(app)
+      .get("/api/reviews/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const comments = body.comments;
+        expect(comments).toHaveLength(3);
+        expect(comments).toBeInstanceOf(Array);
+        comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            review_id: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+          });
+        });
+      });
+  });
+  test("Get 200: should respond with an array of comments for given review_id with all properties", () => {
+    return request(app)
+      .get("/api/reviews/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const comments = body.comments;
+        expect(comments).toHaveLength(3);
+        expect(comments).toBeInstanceOf(Array);
+        expect(comments).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  test("Get 400: should return bad request when id not valid", () => {
+    return request(app)
+      .get("/api/reviews/not-number/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("400: bad request");
+      });
+  });
+  test("Get 404: should return not found review id is number but doesnt exist", () => {
+    return request(app)
+      .get("/api/reviews/999/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found");
+      });
+  });
+  test("Get 200: should return empty array when review id exist but has no comments", () => {
+    request(app)
+      .get("/api/reviews/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        console.log(comments);
+        expect(comments).toEqual([]);
       });
   });
 });
