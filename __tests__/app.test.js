@@ -92,7 +92,7 @@ describe("/api/reviews/:review_id", () => {
       .get("/api/reviews/string")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("400: bad request");
+        expect(body.msg).toBe("bad request");
       });
   });
 });
@@ -145,7 +145,7 @@ describe("/api/reviews/:review_id/comments", () => {
           expect(comment).toMatchObject({
             comment_id: expect.any(Number),
             votes: expect.any(Number),
-            review_id: expect.any(Number),
+            review_id: expect.any(Number, 2),
             created_at: expect.any(String),
             author: expect.any(String),
             body: expect.any(String),
@@ -169,7 +169,7 @@ describe("/api/reviews/:review_id/comments", () => {
       .get("/api/reviews/not-number/comments")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("400: bad request");
+        expect(body.msg).toBe("bad request");
       });
   });
   test("Get 404: should return not found review id is number but doesnt exist", () => {
