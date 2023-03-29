@@ -45,18 +45,18 @@ ORDER BY comments.created_at DESC;
 `,
       [id]
     )
-    .then((result) => {
-      const comments = result.rows;
-
-      return db
-        .query(`SELECT * FROM reviews WHERE review_id = $1;`, [id])
-        .then((reviews) => {
-          if (!reviews.rows.length) {
-            return Promise.reject({ status: 404, msg: "not found" });
-          } else {
-            return comments;
-          }
-        });
+    .then((comments) => {
+      if (comments.rows.length) {
+        return comments.rows;
+      } else {
+        return db
+          .query(`SELECT * FROM reviews WHERE review_id = $1;`, [id])
+          .then((reviews) => {
+            if (!reviews.rows.length) {
+              return Promise.reject({ status: 404, msg: "not found" });
+            }
+          });
+      }
     });
 };
 
