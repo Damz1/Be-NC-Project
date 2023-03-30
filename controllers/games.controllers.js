@@ -5,6 +5,7 @@ const {
   fetchCommentsByReviewId,
   createComment,
   patchVotes,
+  removeComment,
 } = require("../models/games.models");
 
 const getCategories = (req, res, next) => {
@@ -75,6 +76,17 @@ const updateVotes = (req, res, next) => {
     .catch((err) => next(err));
 };
 
+const deleteComment = (req, res, next) => {
+  const commentId = req.params.comment_id;
+
+  removeComment(commentId)
+    .then(() => {
+      res.status(204).send({});
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
 module.exports = {
   getCategories,
   getReviewById,
@@ -82,4 +94,5 @@ module.exports = {
   getCommentsByReviewId,
   addComment,
   updateVotes,
+  deleteComment,
 };
