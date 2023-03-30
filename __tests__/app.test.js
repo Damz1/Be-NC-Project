@@ -196,7 +196,7 @@ describe("Post /api/reviews/:review_id/comments", () => {
     return request(app)
       .post("/api/reviews/1/comments")
       .send({
-        username: "David",
+        username: "mallionaire",
         body: "my posted comment",
       })
       .expect(201)
@@ -206,17 +206,17 @@ describe("Post /api/reviews/:review_id/comments", () => {
           comment_id: expect.any(Number),
           body: "my posted comment",
           review_id: expect.any(Number),
-          author: "David",
+          author: "mallionaire",
           votes: expect.any(Number),
           created_at: expect.any(String),
         });
       });
   });
-  test("POST 406: should not post if comment is empty ", () => {
+  test("POST 406: should not post if missing comment", () => {
     return request(app)
       .post("/api/reviews/1/comments")
       .send({
-        username: "David",
+        username: "mallionaire",
         body: "",
       })
       .expect(406)
@@ -229,13 +229,52 @@ describe("Post /api/reviews/:review_id/comments", () => {
     return request(app)
       .post("/api/reviews/1/comments")
       .send({
-        username: "David",
+        username: "mallionaire",
         body: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s w.",
       })
       .expect(406)
       .then(({ body }) => {
         const { msg } = body;
         expect(msg).toBe("not acceptable");
+      });
+  });
+  test("POST 400: should not post if review_id is invalid", () => {
+    return request(app)
+      .post("/api/reviews/string/comments")
+      .send({
+        username: "mallionaire",
+        body: "some comment",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("bad request");
+      });
+  });
+  test("POST 404: should not post if review_id is non existing", () => {
+    return request(app)
+      .post("/api/reviews/999/comments")
+      .send({
+        username: "mallionaire",
+        body: "some comment",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("not found");
+      });
+  });
+  test("POST 400: should not post if username doesnot exist in users table", () => {
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send({
+        username: "random user",
+        body: "some comment",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("bad request");
       });
   });
 });

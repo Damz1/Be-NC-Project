@@ -62,22 +62,26 @@ ORDER BY comments.created_at DESC;
 
 const createComment = (username, body, id) => {
   return db
-    .query(`INSERT INTO users (username, name) VALUES ($1, $2) RETURNING *`, [
-      username,
-      username,
-    ])
-    .then((userResult) => {
-      const username = userResult.rows[0].username;
-      return db.query(
-        `INSERT INTO comments (body, review_id, author) VALUES ($1, $2, $3) RETURNING *`,
-        [body, id, username]
-      );
-    })
+    .query(`SELECT review_id FROM reviews WHERE review_id = $1`, [id])
     .then((result) => {
-      if (!result.rows[0].body.length || result.rows[0].body.length > 400) {
-        return Promise.reject({ status: 406, msg: "not acceptable" });
+      if (!result.rows.length) {
+        return Promise.reject({ status: 404, msg: "not found" });
+      } else {
+        return db
+          .query(
+            `INSERT INTO comments (body, review_id, author) VALUES ($1, $2, $3) RETURNING *`,
+            [body, id, username]
+          )
+          .then((result) => {
+            if (
+              !result.rows[0].body.length ||
+              result.rows[0].body.length > 400
+            ) {
+              return Promise.reject({ status: 406, msg: "not acceptable" });
+            }
+            return result.rows;
+          });
       }
-      return result.rows;
     });
 };
 

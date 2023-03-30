@@ -51,8 +51,8 @@ const getCommentsByReviewId = (req, res, next) => {
 };
 
 const addComment = (req, res, next) => {
-  const id = req.params.review_id; // 1
-  const { username, body } = req.body; // David //my posted comment
+  const id = parseInt(req.params.review_id, 10);
+  const { username, body } = req.body;
 
   createComment(username, body, id)
     .then((createdComment) => {
