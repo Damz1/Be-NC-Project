@@ -4,6 +4,7 @@ const {
   fetchReviews,
   fetchCommentsByReviewId,
   createComment,
+  patchVotes,
 } = require("../models/games.models");
 
 const getCategories = (req, res, next) => {
@@ -63,10 +64,22 @@ const addComment = (req, res, next) => {
     });
 };
 
+const updateVotes = (req, res, next) => {
+  const id = parseInt(req.params.review_id, 10);
+  const IncreaseVotesBy = req.body.inc_votes;
+
+  patchVotes(id, IncreaseVotesBy)
+    .then((result) => {
+      res.status(200).send({ result });
+    })
+    .catch((err) => next(err));
+};
+
 module.exports = {
   getCategories,
   getReviewById,
   getReviews,
   getCommentsByReviewId,
   addComment,
+  updateVotes,
 };

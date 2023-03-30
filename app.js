@@ -6,6 +6,7 @@ const {
   getReviews,
   getCommentsByReviewId,
   addComment,
+  updateVotes,
 } = require("./controllers/games.controllers");
 const { handle400Errors, handleOtherErrors } = require("./errorsHandler");
 
@@ -15,6 +16,7 @@ app.get("/api/reviews/:review_id", getReviewById);
 app.get("/api/reviews", getReviews);
 app.get("/api/reviews/:review_id/comments", getCommentsByReviewId);
 app.post("/api/reviews/:review_id/comments", addComment);
+app.patch("/api/reviews/:review_id", updateVotes);
 app.all("*", (req, res) => {
   res.status(404).send({ msg: "404: url not found" });
 });

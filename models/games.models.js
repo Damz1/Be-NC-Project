@@ -85,10 +85,25 @@ const createComment = (username, body, id) => {
     });
 };
 
+const patchVotes = (id, IncreaseVotesBy) => {
+  return db
+    .query(
+      `UPDATE reviews SET votes = votes + $1 WHERE review_id = $2 RETURNING *;`,
+      [IncreaseVotesBy, id]
+    )
+    .then((updatedReview) => {
+      if (!updatedReview.rows[0]) {
+        return Promise.reject({ status: 404, msg: "not found" });
+      }
+      return updatedReview.rows[0];
+    });
+};
+
 module.exports = {
   fetchCategories,
   fetchReviewById,
   fetchReviews,
   fetchCommentsByReviewId,
   createComment,
+  patchVotes,
 };
