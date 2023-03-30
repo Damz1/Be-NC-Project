@@ -74,6 +74,9 @@ const createComment = (username, body, id) => {
       );
     })
     .then((result) => {
+      if (!result.rows[0].body.length || result.rows[0].body.length > 400) {
+        return Promise.reject({ status: 406, msg: "not acceptable" });
+      }
       return result.rows;
     });
 };

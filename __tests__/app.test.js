@@ -186,13 +186,11 @@ describe("Get /api/reviews/:review_id/comments", () => {
       .expect(200)
       .then(({ body }) => {
         const { comments } = body;
-        console.log(comments);
         expect(comments).toEqual([]);
       });
   });
 });
 
-//-----NOT FINISHED----//
 describe("Post /api/reviews/:review_id/comments", () => {
   test("POST 201: should post 1 new object with 2 properties", () => {
     return request(app)
@@ -212,6 +210,32 @@ describe("Post /api/reviews/:review_id/comments", () => {
           votes: expect.any(Number),
           created_at: expect.any(String),
         });
+      });
+  });
+  test("POST 406: should not post if comment is empty ", () => {
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send({
+        username: "David",
+        body: "",
+      })
+      .expect(406)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("not acceptable");
+      });
+  });
+  test("POST 406: should not post if comment is more than 400 chars", () => {
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send({
+        username: "David",
+        body: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s w.",
+      })
+      .expect(406)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("not acceptable");
       });
   });
 });
