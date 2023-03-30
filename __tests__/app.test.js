@@ -132,7 +132,7 @@ describe("/api/reviews", () => {
   });
 });
 
-describe("/api/reviews/:review_id/comments", () => {
+describe("Get /api/reviews/:review_id/comments", () => {
   test("Get 200: comments should be served with the most recent comments first", () => {
     return request(app)
       .get("/api/reviews/2/comments")
@@ -188,6 +188,30 @@ describe("/api/reviews/:review_id/comments", () => {
         const { comments } = body;
         console.log(comments);
         expect(comments).toEqual([]);
+      });
+  });
+});
+
+//-----NOT FINISHED----//
+describe("Post /api/reviews/:review_id/comments", () => {
+  test("POST 201: should post 1 new object with 2 properties", () => {
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send({
+        username: "David",
+        body: "my posted comment",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        const comment = body.createdComment[0];
+        expect(comment).toEqual({
+          comment_id: expect.any(Number),
+          body: "my posted comment",
+          review_id: expect.any(Number),
+          author: "David",
+          votes: expect.any(Number),
+          created_at: expect.any(String),
+        });
       });
   });
 });

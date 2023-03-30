@@ -60,9 +60,28 @@ ORDER BY comments.created_at DESC;
     });
 };
 
+const createComment = (username, body, id) => {
+  return db
+    .query(`INSERT INTO users (username, name) VALUES ($1, $2) RETURNING *`, [
+      username,
+      username,
+    ])
+    .then((userResult) => {
+      const username = userResult.rows[0].username;
+      return db.query(
+        `INSERT INTO comments (body, review_id, author) VALUES ($1, $2, $3) RETURNING *`,
+        [body, id, username]
+      );
+    })
+    .then((result) => {
+      return result.rows;
+    });
+};
+
 module.exports = {
   fetchCategories,
   fetchReviewById,
   fetchReviews,
   fetchCommentsByReviewId,
+  createComment,
 };
