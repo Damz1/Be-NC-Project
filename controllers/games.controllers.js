@@ -6,6 +6,7 @@ const {
   createComment,
   patchVotes,
   removeComment,
+  fetchUsers,
 } = require("../models/games.models");
 
 const getCategories = (req, res, next) => {
@@ -87,7 +88,19 @@ const deleteComment = (req, res, next) => {
       next(err);
     });
 };
+
+const getUsers = (req, res, next) => {
+  fetchUsers()
+    .then((users) => {
+      res.status(200).send({ users });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
 module.exports = {
+  getUsers,
   getCategories,
   getReviewById,
   getReviews,

@@ -390,3 +390,21 @@ describe("api/comments/:comment_id", () => {
       });
   });
 });
+
+describe("api/users", () => {
+  test("Get 200: should response with an array of objects, with the properties", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        const { users } = body;
+        expect(users).toBeInstanceOf(Array);
+        expect(users).toHaveLength(4);
+        users.forEach((user) => {
+          expect(user).toHaveProperty("username");
+          expect(user).toHaveProperty("name");
+          expect(user).toHaveProperty("avatar_url");
+        });
+      });
+  });
+});
