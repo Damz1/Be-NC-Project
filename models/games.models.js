@@ -77,7 +77,7 @@ const createComment = (username, body, id) => {
               !result.rows[0].body.length ||
               result.rows[0].body.length > 400
             ) {
-              return Promise.reject({ status: 406, msg: "not acceptable" });
+              return Promise.reject({ status: 400, msg: "not found" });
             }
             return result.rows;
           });

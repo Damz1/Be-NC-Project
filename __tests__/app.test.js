@@ -212,30 +212,30 @@ describe("Post /api/reviews/:review_id/comments", () => {
         });
       });
   });
-  test("POST 406: should not post if missing comment", () => {
+  test("POST 400: should not post if missing comment", () => {
     return request(app)
       .post("/api/reviews/1/comments")
       .send({
         username: "mallionaire",
         body: "",
       })
-      .expect(406)
+      .expect(400)
       .then(({ body }) => {
         const { msg } = body;
-        expect(msg).toBe("not acceptable");
+        expect(msg).toBe("not found");
       });
   });
-  test("POST 406: should not post if comment is more than 400 chars", () => {
+  test("POST 400: should not post if comment is more than 400 chars", () => {
     return request(app)
       .post("/api/reviews/1/comments")
       .send({
         username: "mallionaire",
         body: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s w.",
       })
-      .expect(406)
+      .expect(400)
       .then(({ body }) => {
         const { msg } = body;
-        expect(msg).toBe("not acceptable");
+        expect(msg).toBe("not found");
       });
   });
   test("POST 400: should not post if review_id is invalid", () => {
