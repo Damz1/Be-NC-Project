@@ -79,12 +79,7 @@ const updateVotes = (req, res, next) => {
 const deleteComment = (req, res, next) => {
   const commentId = req.params.comment_id;
 
-  let parsedCommentId;
-  if (!isNaN(commentId)) {
-    parsedCommentId = parseInt(commentId, 10);
-  }
-
-  removeComment(parsedCommentId !== undefined ? parsedCommentId : commentId)
+  removeComment(commentId)
     .then(() => {
       res.status(204).send({});
     })

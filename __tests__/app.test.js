@@ -381,4 +381,12 @@ describe("api/comments/:comment_id", () => {
         expect(body.msg).toBe("bad request");
       });
   });
+  test("404: DELETE should not delete comment with if that doesnt exist", () => {
+    return request(app)
+      .delete("/api/comments/0")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found");
+      });
+  });
 });

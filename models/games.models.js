@@ -100,13 +100,14 @@ const patchVotes = (id, IncreaseVotesBy) => {
 };
 
 const removeComment = (commentId) => {
-  if (isNaN(commentId)) {
-    return Promise.reject({ status: 400, msg: "bad request" });
-  }
   return db
-    .query(`DELETE FROM comments WHERE comment_id = $1;`, [commentId])
+    .query(`DELETE FROM comments WHERE comment_id = $1 RETURNING *;`, [
+      commentId,
+    ])
     .then((result) => {
-      return result.rows;
+      if (!result.rows[0]) {
+        return Promise.reject({ status: 404, msg: "not found" });
+      }
     });
 };
 
