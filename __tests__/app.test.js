@@ -132,7 +132,7 @@ describe("/api/reviews", () => {
   });
 });
 
-describe("/api/reviews/:review_id/comments", () => {
+describe("Get /api/reviews/:review_id/comments", () => {
   test("Get 200: comments should be served with the most recent comments first", () => {
     return request(app)
       .get("/api/reviews/2/comments")
@@ -186,8 +186,95 @@ describe("/api/reviews/:review_id/comments", () => {
       .expect(200)
       .then(({ body }) => {
         const { comments } = body;
-        console.log(comments);
         expect(comments).toEqual([]);
+      });
+  });
+});
+
+describe("Post /api/reviews/:review_id/comments", () => {
+  test("POST 201: should post 1 new object with 2 properties", () => {
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send({
+        username: "mallionaire",
+        body: "my posted comment",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        const comment = body.createdComment[0];
+        expect(comment).toEqual({
+          comment_id: expect.any(Number),
+          body: "my posted comment",
+          review_id: expect.any(Number),
+          author: "mallionaire",
+          votes: expect.any(Number),
+          created_at: expect.any(String),
+        });
+      });
+  });
+  test("POST 400: should not post if missing comment", () => {
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send({
+        username: "mallionaire",
+        body: "",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("not found");
+      });
+  });
+  test("POST 400: should not post if comment is more than 400 chars", () => {
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send({
+        username: "mallionaire",
+        body: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s w.",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("not found");
+      });
+  });
+  test("POST 400: should not post if review_id is invalid", () => {
+    return request(app)
+      .post("/api/reviews/string/comments")
+      .send({
+        username: "mallionaire",
+        body: "some comment",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("bad request");
+      });
+  });
+  test("POST 404: should not post if review_id is non existing", () => {
+    return request(app)
+      .post("/api/reviews/999/comments")
+      .send({
+        username: "mallionaire",
+        body: "some comment",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("not found");
+      });
+  });
+  test("POST 400: should not post if username doesnot exist in users table", () => {
+    return request(app)
+      .post("/api/reviews/1/comments")
+      .send({
+        username: "random user",
+        body: "some comment",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("bad request");
       });
   });
 });

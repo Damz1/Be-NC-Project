@@ -3,6 +3,7 @@ const {
   fetchReviewById,
   fetchReviews,
   fetchCommentsByReviewId,
+  createComment,
 } = require("../models/games.models");
 
 const getCategories = (req, res, next) => {
@@ -49,9 +50,23 @@ const getCommentsByReviewId = (req, res, next) => {
     });
 };
 
+const addComment = (req, res, next) => {
+  const id = parseInt(req.params.review_id, 10);
+  const { username, body } = req.body;
+
+  createComment(username, body, id)
+    .then((createdComment) => {
+      res.status(201).send({ createdComment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
 module.exports = {
   getCategories,
   getReviewById,
   getReviews,
   getCommentsByReviewId,
+  addComment,
 };
