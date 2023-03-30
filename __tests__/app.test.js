@@ -363,3 +363,22 @@ describe("/api/reviews/:review_id", () => {
       });
   });
 });
+
+describe("api/comments/:comment_id", () => {
+  test("200: DELETE should delete comment with given id ", () => {
+    return request(app)
+      .delete("/api/comments/1")
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).toEqual({});
+      });
+  });
+  test("400: DELETE should not delete comment with invalid id", () => {
+    return request(app)
+      .delete("/api/comments/string")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+});

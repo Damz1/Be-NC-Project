@@ -99,6 +99,17 @@ const patchVotes = (id, IncreaseVotesBy) => {
     });
 };
 
+const removeComment = (commentId) => {
+  if (isNaN(commentId)) {
+    return Promise.reject({ status: 400, msg: "bad request" });
+  }
+  return db
+    .query(`DELETE FROM comments WHERE comment_id = $1;`, [commentId])
+    .then((result) => {
+      return result.rows;
+    });
+};
+
 module.exports = {
   fetchCategories,
   fetchReviewById,
@@ -106,4 +117,5 @@ module.exports = {
   fetchCommentsByReviewId,
   createComment,
   patchVotes,
+  removeComment,
 };
