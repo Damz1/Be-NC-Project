@@ -278,3 +278,88 @@ describe("Post /api/reviews/:review_id/comments", () => {
       });
   });
 });
+
+describe("/api/reviews/:review_id", () => {
+  test("200 Patch should update votes by passed value", () => {
+    return request(app)
+      .patch("/api/reviews/2")
+      .send({ inc_votes: 1 })
+      .expect(200)
+      .then(({ body }) => {
+        const review = body.result;
+        expect(review).toEqual({
+          review_id: 2,
+          title: "Jenga",
+          designer: "Leslie Scott",
+          owner: "philippaclaire9",
+          review_img_url:
+            "https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700",
+          review_body: "Fiddly fun for all the family",
+          category: "dexterity",
+          created_at: "2021-01-18T10:01:41.251Z",
+          votes: 6,
+        });
+      });
+  });
+  test("200 Patch should update votes by passed value if it is negative", () => {
+    return request(app)
+      .patch("/api/reviews/2")
+      .send({ inc_votes: -1 })
+      .expect(200)
+      .then(({ body }) => {
+        const review = body.result;
+        expect(review).toEqual({
+          review_id: 2,
+          title: "Jenga",
+          designer: "Leslie Scott",
+          owner: "philippaclaire9",
+          review_img_url:
+            "https://images.pexels.com/photos/4473494/pexels-photo-4473494.jpeg?w=700&h=700",
+          review_body: "Fiddly fun for all the family",
+          category: "dexterity",
+          created_at: "2021-01-18T10:01:41.251Z",
+          votes: 4,
+        });
+      });
+  });
+  test("400 Patch should not update votes if review_id is invalid", () => {
+    return request(app)
+      .patch("/api/reviews/string")
+      .send({ inc_votes: 1 })
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("bad request");
+      });
+  });
+  test("404 Patch should not update votes if review_id is not existing", () => {
+    return request(app)
+      .patch("/api/reviews/0")
+      .send({ inc_votes: 1 })
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("not found");
+      });
+  });
+  test("400 Patch should not update votes if missing value input", () => {
+    return request(app)
+      .patch("/api/reviews/1")
+      .send({ inc_votes: "" })
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("bad request");
+      });
+  });
+  test("400 Patch should not update votes if value input in not-a-num", () => {
+    return request(app)
+      .patch("/api/reviews/1")
+      .send({ inc_votes: "String" })
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("bad request");
+      });
+  });
+});
