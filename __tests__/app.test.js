@@ -342,16 +342,24 @@ describe("/api/reviews/:review_id", () => {
         expect(msg).toBe("not found");
       });
   });
+  test("400 Patch should not update votes if missing value input", () => {
+    return request(app)
+      .patch("/api/reviews/1")
+      .send({ inc_votes: "" })
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("bad request");
+      });
+  });
+  test("400 Patch should not update votes if value input in not-a-num", () => {
+    return request(app)
+      .patch("/api/reviews/1")
+      .send({ inc_votes: "String" })
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("bad request");
+      });
+  });
 });
-
-/*
-
-
-{ inc_votes : 1 } would increment the current review's vote property by 1
-
-{ inc_votes : -100} would decrement the current review's vote property by 100
-
-Responds with:
-
-the updated review
-*/
