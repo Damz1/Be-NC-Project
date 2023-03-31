@@ -1,3 +1,5 @@
+const fs = require("fs/promises");
+
 const {
   fetchCategories,
   fetchReviewById,
@@ -100,6 +102,17 @@ const getUsers = (req, res, next) => {
     });
 };
 
+const getApi = (req, res, next) => {
+  fs.readFile("./endpoints.json", "utf-8")
+    .then((content) => {
+      const parsedContent = JSON.parse(content);
+      res.status(200).json(parsedContent);
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
 module.exports = {
   getUsers,
   getCategories,
@@ -109,4 +122,5 @@ module.exports = {
   addComment,
   updateVotes,
   deleteComment,
+  getApi,
 };

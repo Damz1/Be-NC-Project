@@ -474,3 +474,17 @@ describe("api/users", () => {
       });
   });
 });
+
+describe("api", () => {
+  test("should have relevant properties", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toHaveProperty("GET /api");
+        expect(body).toHaveProperty("GET /api/categories");
+        expect(body).toHaveProperty("GET /api/reviews");
+        expect(body).toHaveProperty("GET /api");
+      });
+  });
+});
