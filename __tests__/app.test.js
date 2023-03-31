@@ -46,7 +46,7 @@ describe("/api/reviews/:review_id", () => {
       .get("/api/reviews/1")
       .expect(200)
       .then(({ body }) => {
-        const review = body.review[0];
+        const { review } = body;
         expect(review).toBeInstanceOf(Object);
         expect(review).toHaveProperty("review_id");
         expect(review).toHaveProperty("title");
@@ -59,13 +59,24 @@ describe("/api/reviews/:review_id", () => {
         expect(review).toHaveProperty("created_at");
       });
   });
+  test("Get 200: should respond with an object with comment_count", () => {
+    return request(app)
+      .get("/api/reviews/1")
+      .expect(200)
+      .then(({ body }) => {
+        const { review } = body;
+        console.log(review);
+        expect(review).toBeInstanceOf(Object);
+        expect(review).toHaveProperty("comment_count");
+      });
+  });
   test("Get 200: should respond with the reivew that match the id", () => {
     return request(app)
       .get("/api/reviews/1")
       .expect(200)
       .then(({ body }) => {
         const review = body.review;
-        expect(review[0]).toMatchObject({
+        expect(review).toMatchObject({
           review_id: 1,
           title: "Agricola",
           category: "euro game",
@@ -228,7 +239,7 @@ describe("Get /api/reviews/:review_id/comments", () => {
   });
   test("Get 200: should return empty array when review id exist but has no comments", () => {
     request(app)
-      .get("/api/reviews/1/comments")
+      .get("/api/reviews/4/comments")
       .expect(200)
       .then(({ body }) => {
         const { comments } = body;
