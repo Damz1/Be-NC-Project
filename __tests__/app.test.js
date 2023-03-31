@@ -142,13 +142,13 @@ describe("/api/reviews", () => {
   });
   test("Get 200: should respond with all the reviews in specified category", () => {
     return request(app)
-      .get("/api/reviews?category=social%20deduction")
+      .get("/api/reviews?category=dexterity")
       .expect(200)
       .then(({ body }) => {
         const { reviews } = body;
-        expect(reviews).toHaveLength(11);
+        expect(reviews).toHaveLength(1);
         reviews.forEach((review) => {
-          expect(review).toHaveProperty("category", "social deduction");
+          expect(review).toHaveProperty("category", "dexterity");
         });
       });
   });

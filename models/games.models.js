@@ -39,7 +39,15 @@ const fetchReviews = (sort_by = "created_at", order = "desc", category) => {
   }
   if (
     category &&
-    !["euro game", "dexterity", "social deduction"].includes(category)
+    ![
+      "strategy",
+      "dexterity",
+      "hidden-roles",
+      "push-your-luck",
+      "deck-building",
+      "engine-building",
+      "roll-and-write",
+    ].includes(category)
   ) {
     return Promise.reject({ status: 400, msg: "bad request" });
   }
