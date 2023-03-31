@@ -57,6 +57,7 @@ describe("/api/reviews/:review_id", () => {
         expect(review).toHaveProperty("category");
         expect(review).toHaveProperty("owner");
         expect(review).toHaveProperty("created_at");
+        expect(review).toHaveProperty("comment_count");
       });
   });
   test("Get 200: should respond with the reivew that match the id", () => {
@@ -228,7 +229,7 @@ describe("Get /api/reviews/:review_id/comments", () => {
   });
   test("Get 200: should return empty array when review id exist but has no comments", () => {
     request(app)
-      .get("/api/reviews/1/comments")
+      .get("/api/reviews/4/comments")
       .expect(200)
       .then(({ body }) => {
         const { comments } = body;
