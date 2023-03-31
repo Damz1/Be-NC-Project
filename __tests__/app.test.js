@@ -121,13 +121,59 @@ describe("/api/reviews", () => {
         });
       });
   });
-  test("Get 200: should respond with an array of objects sorted by date in descending order", () => {
+  test("Get 200: should respond with an array of objects defaults to sorted by date in descending order", () => {
     return request(app)
       .get("/api/reviews")
       .expect(200)
       .then(({ body }) => {
         const reviews = body.reviews;
         expect(reviews).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  test("Get 200: should respond with all the reviews sorted by a title and order by desc", () => {
+    return request(app)
+      .get("/api/reviews?sort_by=title&order=desc")
+      .expect(200)
+      .then(({ body }) => {
+        const { reviews } = body;
+        expect(reviews).toHaveLength(13);
+        expect(reviews).toBeSortedBy("title", { descending: true });
+      });
+  });
+  test("Get 200: should respond with all the reviews in specified category", () => {
+    return request(app)
+      .get("/api/reviews?category=dexterity")
+      .expect(200)
+      .then(({ body }) => {
+        const { reviews } = body;
+        expect(reviews).toHaveLength(1);
+        reviews.forEach((review) => {
+          expect(review).toHaveProperty("category", "dexterity");
+        });
+      });
+  });
+  test("Get 400: should responde with bad request when sort query is invalid", () => {
+    return request(app)
+      .get("/api/reviews?sort_by=Invalid")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Sort query not valid");
+      });
+  });
+  test("Get 400: should responde with bad request when order query is invalid", () => {
+    return request(app)
+      .get("/api/reviews?sort_by=category&order=string")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid order query");
+      });
+  });
+  test("Get 400: should responde with bad request when where query is invalid", () => {
+    return request(app)
+      .get("/api/reviews?category=invlaidInput")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
       });
   });
 });
