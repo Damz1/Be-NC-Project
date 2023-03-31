@@ -1,3 +1,5 @@
+const fs = require("fs/promises");
+
 const {
   fetchCategories,
   fetchReviewById,
@@ -101,113 +103,14 @@ const getUsers = (req, res, next) => {
 };
 
 const getApi = (req, res, next) => {
-  res.status(200).send({
-    endpoints: [
-      {
-        name: "Get All Users",
-        method: "GET",
-        url: "/api/users",
-        parameters: [],
-        description: "Retrieves a list of all users.",
-      },
-      {
-        name: "Get All Categories",
-        method: "GET",
-        url: "/api/categories",
-        parameters: [],
-        description: "Retrieves a list of all categories.",
-      },
-      {
-        name: "Get Review by ID",
-        method: "GET",
-        url: "/api/reviews/:review_id",
-        parameters: [
-          {
-            name: "review_id",
-            type: "string",
-            required: true,
-            description: "The ID of the review to retrieve.",
-          },
-        ],
-        description: "Retrieves a review by its ID.",
-      },
-      {
-        name: "Get All Reviews",
-        method: "GET",
-        url: "/api/reviews",
-        parameters: [],
-        description: "Retrieves a list of all reviews.",
-      },
-      {
-        name: "Get Comments by Review ID",
-        method: "GET",
-        url: "/api/reviews/:review_id/comments",
-        parameters: [
-          {
-            name: "review_id",
-            type: "string",
-            required: true,
-            description: "The ID of the review to retrieve comments for.",
-          },
-        ],
-        description: "Retrieves all comments for a given review.",
-      },
-      {
-        name: "Add Comment to Review",
-        method: "POST",
-        url: "/api/reviews/:review_id/comments",
-        parameters: [
-          {
-            name: "review_id",
-            type: "string",
-            required: true,
-            description: "The ID of the review to add the comment to.",
-          },
-          {
-            name: "comment",
-            type: "string",
-            required: true,
-            description: "The text content of the comment.",
-          },
-        ],
-        description: "Adds a new comment to a review.",
-      },
-      {
-        name: "Update Review Votes",
-        method: "PATCH",
-        url: "/api/reviews/:review_id",
-        parameters: [
-          {
-            name: "review_id",
-            type: "string",
-            required: true,
-            description: "The ID of the review to update.",
-          },
-          {
-            name: "votes",
-            type: "integer",
-            required: true,
-            description: "The new number of votes for the review.",
-          },
-        ],
-        description: "Updates the number of votes for a review.",
-      },
-      {
-        name: "Delete Comment by ID",
-        method: "DELETE",
-        url: "/api/comments/:comment_id",
-        parameters: [
-          {
-            name: "comment_id",
-            type: "string",
-            required: true,
-            description: "The ID of the comment to delete.",
-          },
-        ],
-        description: "Deletes a comment by its ID.",
-      },
-    ],
-  });
+  fs.readFile("./endpoints.json", "utf-8")
+    .then((content) => {
+      const parsedContent = JSON.parse(content);
+      res.status(200).json(parsedContent);
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
 
 module.exports = {
