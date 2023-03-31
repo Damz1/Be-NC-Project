@@ -65,7 +65,6 @@ describe("/api/reviews/:review_id", () => {
       .expect(200)
       .then(({ body }) => {
         const { review } = body;
-        console.log(review);
         expect(review).toBeInstanceOf(Object);
         expect(review).toHaveProperty("comment_count");
       });
@@ -179,12 +178,22 @@ describe("/api/reviews", () => {
         expect(body.msg).toBe("Invalid order query");
       });
   });
-  test("Get 400: should responde with bad request when where query is invalid", () => {
+  test("Get 404: should responde with bad request when where query is invalid", () => {
     return request(app)
       .get("/api/reviews?category=invlaidInput")
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("bad request");
+        expect(body.msg).toBe("not found");
+      });
+  });
+  test("Get 200: should responde with empty array for valid category with no reviews", () => {
+    return request(app)
+      .get("/api/reviews?category=strategy")
+      .expect(200)
+      .then(({ body }) => {
+        const { reviews } = body;
+        console.log(reviews);
+        expect(reviews).toEqual([]);
       });
   });
 });

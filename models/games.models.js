@@ -56,7 +56,7 @@ const fetchReviews = (sort_by = "created_at", order = "desc", category) => {
       "roll-and-write",
     ].includes(category)
   ) {
-    return Promise.reject({ status: 400, msg: "bad request" });
+    return Promise.reject({ status: 404, msg: "not found" });
   }
 
   let queryParams = [];
