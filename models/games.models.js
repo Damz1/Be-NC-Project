@@ -21,7 +21,7 @@ const fetchReviewById = (id) => {
       if (!review.rows.length) {
         return Promise.reject({ status: 404, msg: "not found" });
       }
-      return review.rows;
+      return review.rows[0];
     });
 };
 

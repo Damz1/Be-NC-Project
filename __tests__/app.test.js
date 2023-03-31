@@ -46,7 +46,7 @@ describe("/api/reviews/:review_id", () => {
       .get("/api/reviews/1")
       .expect(200)
       .then(({ body }) => {
-        const review = body.review[0];
+        const { review } = body;
         expect(review).toBeInstanceOf(Object);
         expect(review).toHaveProperty("review_id");
         expect(review).toHaveProperty("title");
@@ -57,6 +57,16 @@ describe("/api/reviews/:review_id", () => {
         expect(review).toHaveProperty("category");
         expect(review).toHaveProperty("owner");
         expect(review).toHaveProperty("created_at");
+      });
+  });
+  test("Get 200: should respond with an object with comment_count", () => {
+    return request(app)
+      .get("/api/reviews/1")
+      .expect(200)
+      .then(({ body }) => {
+        const { review } = body;
+        console.log(review);
+        expect(review).toBeInstanceOf(Object);
         expect(review).toHaveProperty("comment_count");
       });
   });
@@ -66,7 +76,7 @@ describe("/api/reviews/:review_id", () => {
       .expect(200)
       .then(({ body }) => {
         const review = body.review;
-        expect(review[0]).toMatchObject({
+        expect(review).toMatchObject({
           review_id: 1,
           title: "Agricola",
           category: "euro game",
