@@ -44,38 +44,43 @@ const fetchReviews = (sort_by = "created_at", order = "desc", category) => {
   if (order && !["asc", "desc"].includes(order)) {
     return Promise.reject({ status: 400, msg: "Invalid order query" });
   }
-  if (
-    category &&
-    ![
-      "strategy",
-      "dexterity",
-      "hidden-roles",
-      "push-your-luck",
-      "deck-building",
-      "engine-building",
-      "roll-and-write",
-    ].includes(category)
-  ) {
-    return Promise.reject({ status: 404, msg: "not found" });
-  }
 
-  let queryParams = [];
+  return db
+    .query(
+      `SELECT DISTINCT category
+    FROM (
+    SELECT category FROM reviews
+    UNION
+    SELECT slug AS category FROM categories
+  ) AS all_categories;`
+    )
+    .then((result) => {
+      const categories = result.rows.map((row) => {
+        return row.category;
+      });
 
-  let queryStatement = `SELECT reviews.*, COUNT(comments.review_id) AS comment_count FROM reviews 
-  LEFT JOIN comments
-  ON reviews.review_id = comments.review_id`;
+      if (category && !categories.includes(category)) {
+        return Promise.reject({ status: 404, msg: "not found" });
+      }
 
-  if (category) {
-    queryStatement += ` WHERE category = $1`;
-    queryParams.push(category);
-  }
+      let queryParams = [];
 
-  queryStatement += ` GROUP BY reviews.review_id
-  ORDER BY reviews.${sort_by} ${order}`;
+      let queryStatement = `SELECT reviews.*, COUNT(comments.review_id) AS comment_count FROM reviews
+      LEFT JOIN comments
+      ON reviews.review_id = comments.review_id`;
 
-  return db.query(queryStatement, queryParams).then((reviews) => {
-    return reviews.rows;
-  });
+      if (category) {
+        queryStatement += ` WHERE category = $1`;
+        queryParams.push(category);
+      }
+
+      queryStatement += ` GROUP BY reviews.review_id
+      ORDER BY reviews.${sort_by} ${order}`;
+
+      return db.query(queryStatement, queryParams).then((reviews) => {
+        return reviews.rows;
+      });
+    });
 };
 
 const fetchCommentsByReviewId = (id) => {

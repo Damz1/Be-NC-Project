@@ -152,13 +152,13 @@ describe("/api/reviews", () => {
   });
   test("Get 200: should respond with all the reviews in specified category", () => {
     return request(app)
-      .get("/api/reviews?category=dexterity")
+      .get("/api/reviews?category=social+deduction")
       .expect(200)
       .then(({ body }) => {
         const { reviews } = body;
-        expect(reviews).toHaveLength(1);
+        expect(reviews).toHaveLength(11);
         reviews.forEach((review) => {
-          expect(review).toHaveProperty("category", "dexterity");
+          expect(review).toHaveProperty("category", "social deduction");
         });
       });
   });
@@ -188,11 +188,10 @@ describe("/api/reviews", () => {
   });
   test("Get 200: should responde with empty array for valid category with no reviews", () => {
     return request(app)
-      .get("/api/reviews?category=strategy")
+      .get("/api/reviews?category=children%27s%20games")
       .expect(200)
       .then(({ body }) => {
         const { reviews } = body;
-        console.log(reviews);
         expect(reviews).toEqual([]);
       });
   });
