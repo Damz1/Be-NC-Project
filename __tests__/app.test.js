@@ -279,7 +279,7 @@ describe("Post /api/reviews/:review_id/comments", () => {
   });
   test("POST 400: should not post if missing comment", () => {
     return request(app)
-      .post("/api/reviews/1/comments")
+      .post("/api/reviews/5/comments")
       .send({
         username: "mallionaire",
         body: "",
