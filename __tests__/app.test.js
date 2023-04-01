@@ -487,3 +487,20 @@ describe("api", () => {
       });
   });
 });
+
+describe("/api/users/:username", () => {
+  test("Get 200: respond with a user object with its properties", () => {
+    return request(app)
+      .get("/api/users/philippaclaire9")
+      .expect(200)
+      .then(({ body }) => {
+        const { user } = body;
+        expect(user).toEqual({
+          username: "philippaclaire9",
+          name: "philippa",
+          avatar_url:
+            "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4",
+        });
+      });
+  });
+});

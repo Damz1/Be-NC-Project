@@ -168,6 +168,14 @@ const fetchUsers = () => {
   });
 };
 
+const fetchUserByUsername = (username) => {
+  return db
+    .query(`SELECT * FROM users WHERE username = $1;`, [username])
+    .then((user) => {
+      return user.rows[0];
+    });
+};
+
 module.exports = {
   fetchCategories,
   fetchReviewById,
@@ -177,4 +185,5 @@ module.exports = {
   patchVotes,
   removeComment,
   fetchUsers,
+  fetchUserByUsername,
 };

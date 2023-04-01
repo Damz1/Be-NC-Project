@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const {
+  getUserByUsername,
   getCategories,
   deleteComment,
   getUsers,
@@ -8,6 +9,7 @@ const {
 } = require("../controllers/games.controllers");
 
 router.get("/users", getUsers);
+router.get("/users/:username", getUserByUsername);
 router.get("/categories", getCategories);
 router.delete("/comments/:comment_id", deleteComment);
 router.get("/", getApi);
