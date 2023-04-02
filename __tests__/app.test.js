@@ -503,4 +503,13 @@ describe("/api/users/:username", () => {
         });
       });
   });
+  test("Get 404: respond with not found when username is not found", () => {
+    return request(app)
+      .get("/api/users/randomUsername")
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toEqual("not found");
+      });
+  });
 });

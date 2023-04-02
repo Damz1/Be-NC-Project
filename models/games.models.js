@@ -172,6 +172,9 @@ const fetchUserByUsername = (username) => {
   return db
     .query(`SELECT * FROM users WHERE username = $1;`, [username])
     .then((user) => {
+      if (!user.rows.length) {
+        return Promise.reject({ status: 404, msg: "not found" });
+      }
       return user.rows[0];
     });
 };
