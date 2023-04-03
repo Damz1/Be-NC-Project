@@ -193,6 +193,10 @@ const patchCommentVote = (CommmentId, IncreaseVotesB) => {
     });
 };
 
+const postReview = () => {
+  console.log("MODEL");
+};
+
 module.exports = {
   fetchCategories,
   fetchReviewById,
@@ -204,4 +208,5 @@ module.exports = {
   fetchUsers,
   fetchUserByUsername,
   patchCommentVote,
+  postReview,
 };

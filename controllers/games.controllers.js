@@ -11,6 +11,7 @@ const {
   fetchUsers,
   fetchUserByUsername,
   patchCommentVote,
+  postReview,
 } = require("../models/games.models");
 
 const getCategories = (req, res, next) => {
@@ -118,6 +119,14 @@ const updateCommentVote = (req, res, next) => {
     .catch(next);
 };
 
+const addReview = (req, res, next) => {
+  postReview()
+    .then((review) => {
+      res.status(201).send({ review });
+    })
+    .catch(next);
+};
+
 module.exports = {
   getUsers,
   getCategories,
@@ -130,4 +139,5 @@ module.exports = {
   getApi,
   getUserByUsername,
   updateCommentVote,
+  addReview,
 };

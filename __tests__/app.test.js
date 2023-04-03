@@ -107,7 +107,7 @@ describe("/api/reviews/:review_id", () => {
   });
 });
 
-describe("/api/reviews", () => {
+describe("Get /api/reviews", () => {
   test("Get 200: should respond with an array of objects reviews with all properties", () => {
     return request(app)
       .get("/api/reviews")
@@ -162,7 +162,7 @@ describe("/api/reviews", () => {
         });
       });
   });
-  test("Get 400: should responde with bad request when sort query is invalid", () => {
+  test("Get 400: should respond with bad request when sort query is invalid", () => {
     return request(app)
       .get("/api/reviews?sort_by=Invalid")
       .expect(400)
@@ -170,7 +170,7 @@ describe("/api/reviews", () => {
         expect(body.msg).toBe("Sort query not valid");
       });
   });
-  test("Get 400: should responde with bad request when order query is invalid", () => {
+  test("Get 400: should respond with bad request when order query is invalid", () => {
     return request(app)
       .get("/api/reviews?sort_by=category&order=string")
       .expect(400)
@@ -178,7 +178,7 @@ describe("/api/reviews", () => {
         expect(body.msg).toBe("Invalid order query");
       });
   });
-  test("Get 404: should responde with bad request when where query is invalid", () => {
+  test("Get 404: should respond with bad request when where query is invalid", () => {
     return request(app)
       .get("/api/reviews?category=invlaidInput")
       .expect(404)
@@ -186,7 +186,7 @@ describe("/api/reviews", () => {
         expect(body.msg).toBe("not found");
       });
   });
-  test("Get 200: should responde with empty array for valid category with no reviews", () => {
+  test("Get 200: should respond with empty array for valid category with no reviews", () => {
     return request(app)
       .get("/api/reviews?category=children%27s%20games")
       .expect(200)
@@ -196,6 +196,43 @@ describe("/api/reviews", () => {
       });
   });
 });
+
+//-------------------------------------------
+
+describe("Post /api/reviews", () => {
+  test("Get 201: should respond with a added review plus other properties", () => {
+    return request(app)
+      .post("/api/reviews")
+      .send({
+        title: "test title",
+        designer: "test designer",
+        owner: "test owner",
+        review_img_url:
+          "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+        review_body: "test review body",
+        category: "euro game",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        const comment = body.createdComment[0];
+        expect(comment).toMatchObject({
+          title: "test title",
+          designer: "test designer",
+          owner: "test owner",
+          review_img_url:
+            "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+          review_body: "test review body",
+          category: "euro game",
+          review_id: expect.any(Number),
+          votes: expect.any(Number),
+          created_at: expect.any(String),
+          comment_count: expect.any(Number),
+        });
+      });
+  });
+});
+
+//-------------------------------------------
 
 describe("Get /api/reviews/:review_id/comments", () => {
   test("Get 200: comments should be served with the most recent comments first", () => {

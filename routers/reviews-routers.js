@@ -6,6 +6,7 @@ const {
   addComment,
   updateReviewVotes,
   getReviews,
+  addReview,
 } = require("../controllers/games.controllers");
 
 reviewsRouter
@@ -13,6 +14,6 @@ reviewsRouter
   .get(getCommentsByReviewId)
   .post(addComment);
 reviewsRouter.route("/:review_id").get(getReviewById).patch(updateReviewVotes);
-reviewsRouter.get("/", getReviews);
+reviewsRouter.get("/", getReviews).post("/", addReview);
 
 module.exports = reviewsRouter;
