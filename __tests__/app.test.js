@@ -345,7 +345,7 @@ describe("Post /api/reviews/:review_id/comments", () => {
 });
 
 describe("/api/reviews/:review_id", () => {
-  test("200 Patch should update votes by passed value", () => {
+  test("200 Patch should update review votes by passed value", () => {
     return request(app)
       .patch("/api/reviews/2")
       .send({ inc_votes: 1 })
@@ -429,7 +429,7 @@ describe("/api/reviews/:review_id", () => {
   });
 });
 
-describe("api/comments/:comment_id", () => {
+describe("Delete api/comments/:comment_id", () => {
   test("200: DELETE should delete comment with given id ", () => {
     return request(app)
       .delete("/api/comments/1")
@@ -513,3 +513,45 @@ describe("/api/users/:username", () => {
       });
   });
 });
+
+// describe.only("Patch api/comments/:comment_id", () => {
+//   test("200 Patch should update comment votes by passed value", () => {
+//     return request(app)
+//       .patch("/api/comments/4")
+//       .send({ inc_votes: 1 })
+//       .expect(200)
+//       .then(({ body }) => {
+//         console.log(body);
+//         const comment = body.result;
+//         expect(comment).toBeInstanceOf(Object);
+//         expect(comment).toEqual({
+//           body: "EPIC board game!",
+//           votes: 17,
+//           author: "bainesface",
+//           review_id: 2,
+//           created_at: new Date(1511354163389),
+//         });
+//       });
+//   });
+// });
+
+/*
+18. PATCH /api/comments/:comment_id
+
+Edit
+Request body accepts:
+
+an object in the form { inc_votes: newVote }
+
+newVote will indicate how much the votes property in the database should be updated by
+e.g.
+
+{ inc_votes : 1 } would increment the current comment's vote property by 1
+
+{ inc_votes : -1 } would decrement the current comment's vote property by 1
+
+Responds with:
+
+the updated comment
+
+*/

@@ -6,10 +6,11 @@ const {
   fetchReviews,
   fetchCommentsByReviewId,
   createComment,
-  patchVotes,
+  patchReviewVotes,
   removeComment,
   fetchUsers,
   fetchUserByUsername,
+  patchCommentVote,
 } = require("../models/games.models");
 
 const getCategories = (req, res, next) => {
@@ -70,11 +71,11 @@ const addComment = (req, res, next) => {
     });
 };
 
-const updateVotes = (req, res, next) => {
+const updateReviewVotes = (req, res, next) => {
   const id = parseInt(req.params.review_id, 10);
   const IncreaseVotesBy = req.body.inc_votes;
 
-  patchVotes(id, IncreaseVotesBy)
+  patchReviewVotes(id, IncreaseVotesBy)
     .then((result) => {
       res.status(200).send({ result });
     })
@@ -125,6 +126,16 @@ const getUserByUsername = (req, res, next) => {
     });
 };
 
+const updateCommentVote = (req, res, next) => {
+  const commentId = req.params.comment_id;
+  const IncreaseVotesBy = req.body.inc_votes;
+  patchCommentVote(commentId, IncreaseVotesBy)
+    .then((updatedComment) => {
+      res.status(200).send({ updatedComment });
+    })
+    .catch((err) => next(err));
+};
+
 module.exports = {
   getUsers,
   getCategories,
@@ -132,8 +143,9 @@ module.exports = {
   getReviews,
   getCommentsByReviewId,
   addComment,
-  updateVotes,
+  updateReviewVotes,
   deleteComment,
   getApi,
   getUserByUsername,
+  updateCommentVote,
 };
