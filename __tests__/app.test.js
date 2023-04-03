@@ -514,44 +514,71 @@ describe("/api/users/:username", () => {
   });
 });
 
-// describe.only("Patch api/comments/:comment_id", () => {
-//   test("200 Patch should update comment votes by passed value", () => {
-//     return request(app)
-//       .patch("/api/comments/4")
-//       .send({ inc_votes: 1 })
-//       .expect(200)
-//       .then(({ body }) => {
-//         console.log(body);
-//         const comment = body.result;
-//         expect(comment).toBeInstanceOf(Object);
-//         expect(comment).toEqual({
-//           body: "EPIC board game!",
-//           votes: 17,
-//           author: "bainesface",
-//           review_id: 2,
-//           created_at: new Date(1511354163389),
-//         });
-//       });
-//   });
-// });
-
-/*
-18. PATCH /api/comments/:comment_id
-
-Edit
-Request body accepts:
-
-an object in the form { inc_votes: newVote }
-
-newVote will indicate how much the votes property in the database should be updated by
-e.g.
-
-{ inc_votes : 1 } would increment the current comment's vote property by 1
-
-{ inc_votes : -1 } would decrement the current comment's vote property by 1
-
-Responds with:
-
-the updated comment
-
-*/
+describe("Patch api/comments/:comment_id", () => {
+  test("200 Patch should update comment votes by passed Positive value and respond with updated comment", () => {
+    return request(app)
+      .patch("/api/comments/4")
+      .send({ inc_votes: 1 })
+      .expect(200)
+      .then(({ body }) => {
+        const comment = body.updatedComment;
+        expect(comment).toBeInstanceOf(Object);
+        expect(comment).toEqual({
+          comment_id: 4,
+          body: "EPIC board game!",
+          review_id: 2,
+          author: "bainesface",
+          votes: 17,
+          created_at: "2017-11-22T12:36:03.389Z",
+        });
+      });
+  });
+  test("200 Patch should update comment votes by passed Negative value and respond with updated comment", () => {
+    return request(app)
+      .patch("/api/comments/4")
+      .send({ inc_votes: -2 })
+      .expect(200)
+      .then(({ body }) => {
+        const comment = body.updatedComment;
+        expect(comment).toBeInstanceOf(Object);
+        expect(comment).toEqual({
+          comment_id: 4,
+          body: "EPIC board game!",
+          review_id: 2,
+          author: "bainesface",
+          votes: 14,
+          created_at: "2017-11-22T12:36:03.389Z",
+        });
+      });
+  });
+  test("PATCH 400: should not update if comment_id is invalid", () => {
+    return request(app)
+      .patch("/api/comments/string")
+      .send({ inc_votes: 1 })
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("bad request");
+      });
+  });
+  test("PATCH 404: should not update if comment_id is non existing", () => {
+    return request(app)
+      .patch("/api/comments/0")
+      .send({ inc_votes: 1 })
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("not found");
+      });
+  });
+  test("PATCH 400: should not update if req missing value", () => {
+    return request(app)
+      .patch("/api/comments/4")
+      .send({ inc_votes: "" })
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("bad request");
+      });
+  });
+});

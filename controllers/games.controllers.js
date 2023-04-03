@@ -18,9 +18,7 @@ const getCategories = (req, res, next) => {
     .then((categories) => {
       res.status(200).send({ categories });
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
 const getReviewById = (req, res, next) => {
@@ -30,9 +28,7 @@ const getReviewById = (req, res, next) => {
     .then((review) => {
       res.status(200).send({ review });
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
 const getReviews = (req, res, next) => {
@@ -41,9 +37,7 @@ const getReviews = (req, res, next) => {
     .then((reviews) => {
       res.status(200).send({ reviews });
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
 const getCommentsByReviewId = (req, res, next) => {
@@ -53,9 +47,7 @@ const getCommentsByReviewId = (req, res, next) => {
     .then((comments) => {
       res.status(200).send({ comments });
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
 const addComment = (req, res, next) => {
@@ -66,20 +58,18 @@ const addComment = (req, res, next) => {
     .then((createdComment) => {
       res.status(201).send({ createdComment });
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
 const updateReviewVotes = (req, res, next) => {
-  const id = parseInt(req.params.review_id, 10);
+  const CommmentId = parseInt(req.params.review_id, 10);
   const IncreaseVotesBy = req.body.inc_votes;
 
-  patchReviewVotes(id, IncreaseVotesBy)
+  patchReviewVotes(CommmentId, IncreaseVotesBy)
     .then((result) => {
       res.status(200).send({ result });
     })
-    .catch((err) => next(err));
+    .catch(next);
 };
 
 const deleteComment = (req, res, next) => {
@@ -89,9 +79,7 @@ const deleteComment = (req, res, next) => {
     .then(() => {
       res.status(204).send({});
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
 const getUsers = (req, res, next) => {
@@ -99,9 +87,7 @@ const getUsers = (req, res, next) => {
     .then((users) => {
       res.status(200).send({ users });
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
 const getApi = (req, res, next) => {
@@ -110,9 +96,7 @@ const getApi = (req, res, next) => {
       const parsedContent = JSON.parse(content);
       res.status(200).json(parsedContent);
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
 const getUserByUsername = (req, res, next) => {
@@ -121,9 +105,7 @@ const getUserByUsername = (req, res, next) => {
     .then((user) => {
       res.status(200).send({ user });
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
 const updateCommentVote = (req, res, next) => {
@@ -133,7 +115,7 @@ const updateCommentVote = (req, res, next) => {
     .then((updatedComment) => {
       res.status(200).send({ updatedComment });
     })
-    .catch((err) => next(err));
+    .catch(next);
 };
 
 module.exports = {
