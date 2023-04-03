@@ -2,11 +2,13 @@ const express = require("express");
 const app = express();
 const routers = require("./routers/routers");
 const reviewsRouter = require("./routers/reviews-routers");
+const usersRouter = require("./routers/users-router");
 const { handle400Errors, handleOtherErrors } = require("./errorsHandler");
 
 app.use(express.json());
 
 app.use("/api/reviews", reviewsRouter);
+app.use("/api/users", usersRouter);
 app.use("/api", routers);
 
 app.all("*", (req, res) => {
