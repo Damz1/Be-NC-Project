@@ -136,7 +136,7 @@ const createComment = (username, body, id) => {
     });
 };
 
-const patchVotes = (id, IncreaseVotesBy) => {
+const patchReviewVotes = (id, IncreaseVotesBy) => {
   return db
     .query(
       `UPDATE reviews SET votes = votes + $1 WHERE review_id = $2 RETURNING *;`,
@@ -179,14 +179,29 @@ const fetchUserByUsername = (username) => {
     });
 };
 
+const patchCommentVote = (CommmentId, IncreaseVotesB) => {
+  return db
+    .query(
+      `UPDATE comments SET votes = votes + $1 WHERE comment_id = $2 RETURNING *;`,
+      [IncreaseVotesB, CommmentId]
+    )
+    .then((updatedComment) => {
+      if (!updatedComment.rows[0]) {
+        return Promise.reject({ status: 404, msg: "not found" });
+      }
+      return updatedComment.rows[0];
+    });
+};
+
 module.exports = {
   fetchCategories,
   fetchReviewById,
   fetchReviews,
   fetchCommentsByReviewId,
   createComment,
-  patchVotes,
+  patchReviewVotes,
   removeComment,
   fetchUsers,
   fetchUserByUsername,
+  patchCommentVote,
 };

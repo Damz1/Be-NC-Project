@@ -345,7 +345,7 @@ describe("Post /api/reviews/:review_id/comments", () => {
 });
 
 describe("/api/reviews/:review_id", () => {
-  test("200 Patch should update votes by passed value", () => {
+  test("200 Patch should update review votes by passed value", () => {
     return request(app)
       .patch("/api/reviews/2")
       .send({ inc_votes: 1 })
@@ -429,7 +429,7 @@ describe("/api/reviews/:review_id", () => {
   });
 });
 
-describe("api/comments/:comment_id", () => {
+describe("Delete api/comments/:comment_id", () => {
   test("200: DELETE should delete comment with given id ", () => {
     return request(app)
       .delete("/api/comments/1")
@@ -510,6 +510,75 @@ describe("/api/users/:username", () => {
       .then(({ body }) => {
         const { msg } = body;
         expect(msg).toEqual("not found");
+      });
+  });
+});
+
+describe("Patch api/comments/:comment_id", () => {
+  test("200 Patch should update comment votes by passed Positive value and respond with updated comment", () => {
+    return request(app)
+      .patch("/api/comments/4")
+      .send({ inc_votes: 1 })
+      .expect(200)
+      .then(({ body }) => {
+        const comment = body.updatedComment;
+        expect(comment).toBeInstanceOf(Object);
+        expect(comment).toEqual({
+          comment_id: 4,
+          body: "EPIC board game!",
+          review_id: 2,
+          author: "bainesface",
+          votes: 17,
+          created_at: "2017-11-22T12:36:03.389Z",
+        });
+      });
+  });
+  test("200 Patch should update comment votes by passed Negative value and respond with updated comment", () => {
+    return request(app)
+      .patch("/api/comments/4")
+      .send({ inc_votes: -2 })
+      .expect(200)
+      .then(({ body }) => {
+        const comment = body.updatedComment;
+        expect(comment).toBeInstanceOf(Object);
+        expect(comment).toEqual({
+          comment_id: 4,
+          body: "EPIC board game!",
+          review_id: 2,
+          author: "bainesface",
+          votes: 14,
+          created_at: "2017-11-22T12:36:03.389Z",
+        });
+      });
+  });
+  test("PATCH 400: should not update if comment_id is invalid", () => {
+    return request(app)
+      .patch("/api/comments/string")
+      .send({ inc_votes: 1 })
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("bad request");
+      });
+  });
+  test("PATCH 404: should not update if comment_id is non existing", () => {
+    return request(app)
+      .patch("/api/comments/0")
+      .send({ inc_votes: 1 })
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("not found");
+      });
+  });
+  test("PATCH 400: should not update if req missing value", () => {
+    return request(app)
+      .patch("/api/comments/4")
+      .send({ inc_votes: "" })
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toBe("bad request");
       });
   });
 });
