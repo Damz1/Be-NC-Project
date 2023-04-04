@@ -107,7 +107,7 @@ describe("/api/reviews/:review_id", () => {
   });
 });
 
-describe("/api/reviews", () => {
+describe("Get /api/reviews", () => {
   test("Get 200: should respond with an array of objects reviews with all properties", () => {
     return request(app)
       .get("/api/reviews")
@@ -162,7 +162,7 @@ describe("/api/reviews", () => {
         });
       });
   });
-  test("Get 400: should responde with bad request when sort query is invalid", () => {
+  test("Get 400: should respond with bad request when sort query is invalid", () => {
     return request(app)
       .get("/api/reviews?sort_by=Invalid")
       .expect(400)
@@ -170,7 +170,7 @@ describe("/api/reviews", () => {
         expect(body.msg).toBe("Sort query not valid");
       });
   });
-  test("Get 400: should responde with bad request when order query is invalid", () => {
+  test("Get 400: should respond with bad request when order query is invalid", () => {
     return request(app)
       .get("/api/reviews?sort_by=category&order=string")
       .expect(400)
@@ -178,7 +178,7 @@ describe("/api/reviews", () => {
         expect(body.msg).toBe("Invalid order query");
       });
   });
-  test("Get 404: should responde with bad request when where query is invalid", () => {
+  test("Get 404: should respond with bad request when where query is invalid", () => {
     return request(app)
       .get("/api/reviews?category=invlaidInput")
       .expect(404)
@@ -186,13 +186,80 @@ describe("/api/reviews", () => {
         expect(body.msg).toBe("not found");
       });
   });
-  test("Get 200: should responde with empty array for valid category with no reviews", () => {
+  test("Get 200: should respond with empty array for valid category with no reviews", () => {
     return request(app)
       .get("/api/reviews?category=children%27s%20games")
       .expect(200)
       .then(({ body }) => {
         const { reviews } = body;
         expect(reviews).toEqual([]);
+      });
+  });
+});
+
+describe("Post /api/reviews", () => {
+  test("Post 201: should respond with a added review plus other properties", () => {
+    return request(app)
+      .post("/api/reviews")
+      .send({
+        title: "test title",
+        designer: "test designer",
+        owner: "mallionaire",
+        review_img_url:
+          "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+        review_body: "test review body",
+        category: "dexterity",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        const { review } = body;
+        expect(review).toMatchObject({
+          title: "test title",
+          designer: "test designer",
+          owner: "mallionaire",
+          review_img_url:
+            "https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg?w=700&h=700",
+          review_body: "test review body",
+          category: "dexterity",
+          review_id: expect.any(Number),
+          votes: expect.any(Number),
+          created_at: expect.any(String),
+          comment_count: expect.any(Number),
+        });
+      });
+  });
+  test("POST 400 /api/reviews respond with 400 if missing title category owner or review_body", () => {
+    return request(app)
+      .post("/api/reviews")
+      .send({
+        designer: "test designer",
+        title: "",
+        owner: "mallionaire",
+        review_img_url:
+          "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+        review_body: "test review body",
+        category: "dexterity",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("POST 400 /api/reviews respond with 400 if category is not valid", () => {
+    return request(app)
+      .post("/api/reviews")
+      .send({
+        designer: "test designer",
+        title: "test title",
+        owner: "mallionaire",
+        review_img_url:
+          "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+        review_body: "test review body",
+        category: "invalid category",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
       });
   });
 });
