@@ -120,7 +120,8 @@ const updateCommentVote = (req, res, next) => {
 };
 
 const addReview = (req, res, next) => {
-  postReview()
+  const reviewData = req.body;
+  postReview(reviewData)
     .then((review) => {
       res.status(201).send({ review });
     })

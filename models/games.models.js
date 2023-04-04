@@ -14,7 +14,7 @@ const fetchReviewById = (id) => {
     LEFT JOIN comments
     ON reviews.review_id = comments.review_id
     WHERE reviews.review_id = $1
-    GROUP BY reviews.review_id;`,
+      GROUP BY reviews.review_id;`,
       [id]
     )
     .then((review) => {
@@ -58,7 +58,6 @@ const fetchReviews = (sort_by = "created_at", order = "desc", category) => {
       const categories = result.rows.map((row) => {
         return row.category;
       });
-
       if (category && !categories.includes(category)) {
         return Promise.reject({ status: 404, msg: "not found" });
       }
@@ -86,14 +85,7 @@ const fetchReviews = (sort_by = "created_at", order = "desc", category) => {
 const fetchCommentsByReviewId = (id) => {
   return db
     .query(
-      `
-SELECT comments.* FROM reviews
-JOIN comments
-ON reviews.review_id = comments.review_id
-WHERE reviews.review_id = $1
-ORDER BY comments.created_at DESC;
-
-`,
+      `SELECT comments.* FROM reviews JOIN comments ON reviews.review_id = comments.review_id WHERE reviews.review_id = $1 ORDER BY comments.created_at DESC;`,
       [id]
     )
     .then((comments) => {
@@ -193,8 +185,25 @@ const patchCommentVote = (CommmentId, IncreaseVotesB) => {
     });
 };
 
-const postReview = () => {
-  console.log("MODEL");
+const postReview = (reviewData) => {
+  const { title, owner, review_body, category, designer } = reviewData;
+
+  if (!title || !category || !owner || !review_body) {
+    return Promise.reject({ status: 400, msg: "bad request" });
+  }
+  return db
+    .query(`ALTER TABLE reviews ADD COLUMN comment_count INTEGER DEFAULT 0;`)
+    .then(() => {
+      return db.query(
+        `INSERT INTO reviews (title, designer, owner, review_body, category, comment_count)
+          VALUES ($1, $2, $3, $4, $5, 0)
+          RETURNING *;`,
+        [title, designer, owner, review_body, category]
+      );
+    })
+    .then((createdComment) => {
+      return createdComment.rows[0];
+    });
 };
 
 module.exports = {

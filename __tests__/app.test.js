@@ -197,32 +197,30 @@ describe("Get /api/reviews", () => {
   });
 });
 
-//-------------------------------------------
-
 describe("Post /api/reviews", () => {
-  test("Get 201: should respond with a added review plus other properties", () => {
+  test("Post 201: should respond with a added review plus other properties", () => {
     return request(app)
       .post("/api/reviews")
       .send({
         title: "test title",
         designer: "test designer",
-        owner: "test owner",
+        owner: "mallionaire",
         review_img_url:
           "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
         review_body: "test review body",
-        category: "euro game",
+        category: "dexterity",
       })
       .expect(201)
       .then(({ body }) => {
-        const comment = body.createdComment[0];
-        expect(comment).toMatchObject({
+        const { review } = body;
+        expect(review).toMatchObject({
           title: "test title",
           designer: "test designer",
-          owner: "test owner",
+          owner: "mallionaire",
           review_img_url:
-            "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+            "https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg?w=700&h=700",
           review_body: "test review body",
-          category: "euro game",
+          category: "dexterity",
           review_id: expect.any(Number),
           votes: expect.any(Number),
           created_at: expect.any(String),
@@ -230,9 +228,41 @@ describe("Post /api/reviews", () => {
         });
       });
   });
+  test("POST 400 /api/reviews respond with 400 if missing title category owner or review_body", () => {
+    return request(app)
+      .post("/api/reviews")
+      .send({
+        designer: "test designer",
+        title: "",
+        owner: "mallionaire",
+        review_img_url:
+          "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+        review_body: "test review body",
+        category: "dexterity",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("POST 400 /api/reviews respond with 400 if category is not valid", () => {
+    return request(app)
+      .post("/api/reviews")
+      .send({
+        designer: "test designer",
+        title: "test title",
+        owner: "mallionaire",
+        review_img_url:
+          "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+        review_body: "test review body",
+        category: "invalid category",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
 });
-
-//-------------------------------------------
 
 describe("Get /api/reviews/:review_id/comments", () => {
   test("Get 200: comments should be served with the most recent comments first", () => {
