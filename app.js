@@ -1,3 +1,4 @@
+const cors = require("cors");
 const express = require("express");
 const app = express();
 const routers = require("./routers/routers");
@@ -6,6 +7,7 @@ const usersRouter = require("./routers/users-router");
 const commentsRouter = require("./routers/comments-router");
 const { handle400Errors, handleOtherErrors } = require("./errorsHandler");
 
+app.use(cors());
 app.use(express.json());
 
 app.use("/api/comments", commentsRouter);
