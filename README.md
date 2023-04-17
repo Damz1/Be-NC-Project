@@ -1,6 +1,6 @@
 # Introduction to Northcoders House of Games API
 
-The Northcoders House of Games API is a powerful web API built with Node.js and PostgreSQL, providing a backend interface for a video game reviews website.
+The Northcoders House of Games API is a powerful web API built with Node.js and PostgreSQL, providing a backend interface for a board game reviews website.
 It offers users access to game categories, reviews, and comments, along with the ability to add comments, update review votes, and delete comments. The API is designed to be maintainable and secure, with robust input validation and error handling features.
 
 Follow the instructions below to set up a local copy of the project and start exploring the API.
